@@ -22,7 +22,7 @@ player: {
 
 ```
 score: {
- <id>: {
+ <player id>: {
   name: '<player name>',
   count: <number of color found>,
   time: <elapsed time since beginning in seconds>
