@@ -35,3 +35,27 @@ score/
  }
 ]
 ```
+
+Example of `JSON`:
+
+```
+{
+	"player": {
+		"id": "f64f2940-fae4-11e7-8c5f-ef356f279131",
+		"name": "arnaud",
+		"count": 10,
+		"start": 1520606607
+	},
+	"score": [{
+		"id": "f64f2940-fae4-11e7-8c5f-ef356f279131",
+		"name": "arnaud",
+		"count": 10,
+		"time": 60000
+	}, {
+		"id": "f64f2940-fae4-11e7-8c5f-ef356f279132",
+		"name": "michael",
+		"count": 10,
+		"time": 50000
+	}]
+}
+```
