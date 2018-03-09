@@ -1,6 +1,5 @@
 <template>
   <div class="leaderboard">
-    <h2>Simon Game</h2>
     <section v-if="player.id">
       <h3>{{player.name}} playing</h3>
       <h1>{{player.count}}</h1>
@@ -8,10 +7,11 @@
     <section v-else>
       <h3>Leaderboard</h3>
       <ul>
-        <li v-for="score in leaderboard" :key="score.id">
-          <div>{{score.name}}</div>
-          <div>{{score.count}}</div>
-          <div>{{score.time/1000}}'</div>
+        <li v-for="(score, index) in leaderboard" :key="score.id">
+          <div class="position">{{index+1}} <span v-if="index === 0">🎉</span></div>
+          <div class="name">{{score.name}}</div>
+          <div class="count"><img src="../asset/point.svg">{{score.count}}</div>
+          <div class="time"><img src="../asset/timer.svg">{{score.time/1000}}'</div>
         </li>
       </ul>
     </section>
@@ -35,7 +35,7 @@
     },
     firebase() {
       return {
-        scores: Firebase.database().ref('score/').orderByChild('count').limitToLast(10),
+        scores: Firebase.database().ref('score/').orderByChild('count').limitToLast(5),
         player: {
           source: Firebase.database().ref('player/'),
           asObject: true,
@@ -46,4 +46,42 @@
 </script>
 
 <style scoped lang="scss">
+  .leaderboard {
+    height: 100vh;
+    text-align: center;
+    li {
+      &:nth-of-type(1) {
+        background-color: rgba(255, 215, 0, .8);
+      }
+      &:nth-of-type(2) {
+        background-color: rgba(205, 127, 50, .8);
+      }
+      &:nth-of-type(3) {
+        background-color: rgba(192, 192, 192, .8);
+      }
+      background-color: rgba(255, 255, 255, .2);
+      border-radius: 3px;
+      margin: 20px 5%;
+      padding: 15px;
+      display: flex;
+      width: 85%;
+      max-width: 800px;
+      .name {
+        text-align: left;
+        flex-grow: 1;
+        text-transform: capitalize;
+      }
+      .position, .count, .time {
+        width: 20%;
+        line-height: 70px;
+      }
+      .count, .time {
+        img {
+          margin-bottom: 0;
+          margin-right: 10px;
+          height: 40px;
+        }
+      }
+    }
+  }
 </style>
