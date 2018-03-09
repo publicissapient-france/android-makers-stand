@@ -12,8 +12,9 @@
 player/
 
 {
-  name: '<random name>',
   id: '<unique id>',
+  name: '<random name>',
+  count: <number of color found>,
   start: <timestamp at start>
 }
 ```
@@ -25,11 +26,12 @@ player/
 ```
 score/
 
-{
- <player id>: {
+[
+ {
+  id: <player id>
   name: '<player name>',
   count: <number of color found>,
-  time: <elapsed time since beginning in seconds>
+  time: <elapsed time since beginning in milliseconds>
  }
-}
+]
 ```
