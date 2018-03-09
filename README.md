@@ -9,7 +9,9 @@
 - Store in Firebase:
 
 ```
-player: {
+player/
+
+{
   name: '<random name>',
   id: '<unique id>',
   start: <timestamp at start>
@@ -21,7 +23,9 @@ player: {
 - Store in Firebase:
 
 ```
-score: {
+score/
+
+{
  <player id>: {
   name: '<player name>',
   count: <number of color found>,
