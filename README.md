@@ -36,6 +36,8 @@ score/
 ]
 ```
 
+- Remove `/player` node
+
 Example of `JSON`:
 
 ```
