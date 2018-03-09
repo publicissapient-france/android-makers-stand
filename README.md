@@ -27,6 +27,7 @@ player/
 score/
 
 [
+ ...
  {
   id: <player id>
   name: '<player name>',
