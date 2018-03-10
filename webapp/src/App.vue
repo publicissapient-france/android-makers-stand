@@ -17,6 +17,8 @@
     color: #ffffff;
     font-family: 'Oswald', sans-serif;
     font-size: 3em;
+    height: 100vh;
+    text-align: center;
 
     h1, h2, h3 {
       color: #fbb03b;

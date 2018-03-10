@@ -1,8 +1,10 @@
 <template>
   <div class="leaderboard">
     <section v-if="player.id">
-      <h3>{{player.name}} playing</h3>
-      <h1>{{player.count}}</h1>
+      <h3>playing</h3>
+      <div>
+        <h1>{{player.name}}</h1>
+      </div>
     </section>
     <section v-else>
       <h3>Leaderboard</h3>
@@ -33,6 +35,13 @@
         return _.sortBy(_.filter(this.scores, _.identity), [s => -s.count, s => s.time]);
       },
     },
+    watch: {
+      player() {
+        if (this.player.id) {
+          this.$router.push('/play');
+        }
+      },
+    },
     firebase() {
       return {
         scores: Firebase.database().ref('score/').orderByChild('count').limitToLast(5),
@@ -47,8 +56,6 @@
 
 <style scoped lang="scss">
   .leaderboard {
-    height: 100vh;
-    text-align: center;
     li {
       &:nth-of-type(1) {
         background-color: rgba(255, 215, 0, .8);
