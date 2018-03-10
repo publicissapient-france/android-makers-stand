@@ -27,7 +27,7 @@
     computed: {
       elapsedTime() {
         return Math.floor((new Date().getTime() - this.player.start) / 1000);
-      }
+      },
     },
     firebase() {
       return {
