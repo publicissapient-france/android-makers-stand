@@ -10,6 +10,10 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: '/leaderboard',
+    },
+    {
+      path: '/leaderboard',
       component: Leaderboard,
     },
     {
@@ -19,6 +23,6 @@ export default new Router({
     {
       path: '/auth',
       component: Auth,
-    }
+    },
   ],
 });
