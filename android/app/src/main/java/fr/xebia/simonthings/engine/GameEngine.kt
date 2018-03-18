@@ -7,69 +7,39 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
 
-sealed class Instruction {}
-
-class ScreenInstruction(val screen: Screen) : Instruction() {
-}
-
-class LedInstruction(val led: Button, val show: Boolean) : Instruction() {
-}
-
-enum class PlayState {
-    LEARN,
-    PLAY
-}
-
-enum class Screen {
-    WAITING,
-    PLAY,
-    NAME
-}
-
-enum class Button {
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    WHITE
-}
-
-class Action {}
-
-
-class GameEngine() {
+class GameEngine {
     private var playState: PlayState = PlayState.LEARN
     private var screen: Screen = Screen.WAITING
-    private val playerInputs = mutableListOf<Button>()
+    private val playerInputs = mutableListOf<GameInputButton>()
 
-    private val instructions = mutableListOf<Button>()
-    private val ps = PublishSubject.create<Instruction>()
+    private val instructions = mutableListOf<GameInputButton>()
+    private val ps = PublishSubject.create<DisplayRequest>()
 
-    fun listen(): Observable<Instruction> {
+    fun listen(): Observable<DisplayRequest> {
         return ps
     }
 
     fun start() {
-        ps.onNext(ScreenInstruction(Screen.WAITING))
+        ps.onNext(ScreenDisplayRequest(Screen.WAITING))
     }
 
     private fun playSequence() {
         playerInputs.clear()
-        instructions.add(Button.YELLOW)
-        instructions.add(Button.WHITE)
+        instructions.add(GameInputButton.YELLOW)
+        instructions.add(GameInputButton.WHITE)
 
         playState = PlayState.LEARN
 
         Observable.fromIterable(instructions)
                 .concatMap { button ->
-                    ps.onNext(LedInstruction(button, true))
+                    ps.onNext(LedDisplayRequest(button, true))
                     return@concatMap Observable.timer(1, TimeUnit.SECONDS)
                             .map {
                                 button
                             }
                 }
                 .map {
-                    ps.onNext(LedInstruction(it, false))
+                    ps.onNext(LedDisplayRequest(it, false))
                 }
                 .doOnComplete {
                     playState = PlayState.PLAY
@@ -80,15 +50,15 @@ class GameEngine() {
                 }
     }
 
-    fun buttonPressed(buttonPressed: Button) {
+    fun buttonPressed(gameInputButtonPressed: GameInputButton) {
 
-        println("Pressed ${buttonPressed.name} state is ${playState.name}")
+        println("Pressed ${gameInputButtonPressed.name} state is ${playState.name}")
 
         when (screen) {
             Screen.WAITING -> {
                 screen = Screen.PLAY
                 playState = PlayState.LEARN
-                ps.onNext(ScreenInstruction(Screen.PLAY))
+                ps.onNext(ScreenDisplayRequest(Screen.PLAY))
                 instructions.clear()
                 playSequence()
 
@@ -101,12 +71,12 @@ class GameEngine() {
                     return
                 }
 
-                playerInputs.add(buttonPressed)
+                playerInputs.add(gameInputButtonPressed)
                 playerInputs.forEachIndexed { i, btn ->
                     if (btn != instructions[i]) {
                         playState = PlayState.LEARN
                         screen = Screen.NAME
-                        ps.onNext(ScreenInstruction(Screen.NAME))
+                        ps.onNext(ScreenDisplayRequest(Screen.NAME))
                         return
                     }
                 }
@@ -115,12 +85,12 @@ class GameEngine() {
                     playState = PlayState.LEARN
                 }
 
-                ps.onNext(LedInstruction(buttonPressed, true))
+                ps.onNext(LedDisplayRequest(gameInputButtonPressed, true))
                 Single.timer(500, TimeUnit.MILLISECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe { _ ->
-                            ps.onNext(LedInstruction(buttonPressed, false))
+                            ps.onNext(LedDisplayRequest(gameInputButtonPressed, false))
 
                             if (playerInputs.size == instructions.size) {
                                 playSequence()
@@ -132,7 +102,7 @@ class GameEngine() {
             Screen.NAME -> {
                 screen = Screen.PLAY
                 playState = PlayState.LEARN
-                ps.onNext(ScreenInstruction(Screen.PLAY))
+                ps.onNext(ScreenDisplayRequest(Screen.PLAY))
                 instructions.clear()
                 playSequence()
             }
