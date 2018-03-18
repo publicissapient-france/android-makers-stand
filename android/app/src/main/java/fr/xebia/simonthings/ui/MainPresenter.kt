@@ -1,15 +1,12 @@
 package fr.xebia.simonthings.ui
 
 import com.google.android.things.pio.PeripheralManager
-import fr.xebia.simonthings.engine.GameEngine
-import fr.xebia.simonthings.engine.GameInputButton
-import fr.xebia.simonthings.engine.LedDisplayRequest
-import fr.xebia.simonthings.engine.ScreenDisplayRequest
+import fr.xebia.simonthings.engine.*
 import fr.xebia.simonthings.gpio.LedButtonManager
 import io.reactivex.disposables.CompositeDisposable
 
 
-class MainPresenter(private val view: MainActivity) {
+class MainPresenter(private val view: MainActivity, private val soundManager: SoundManager) {
 
     private val gameEngine = GameEngine()
     private val ledButtonsManager = LedButtonManager()
@@ -22,7 +19,16 @@ class MainPresenter(private val view: MainActivity) {
                 .subscribe { instruction ->
                     when (instruction) {
                         is ScreenDisplayRequest -> view.showScreen(instruction.screen)
-                        is LedDisplayRequest -> ledButtonsManager.showLed(instruction.gameInputButton, instruction.show)
+                        is SoundDisplayRequest -> soundManager.playSound(instruction.soundResId)
+                        is GameInputButtonDisplayRequest -> {
+                            ledButtonsManager.showLed(instruction.gameInputButton, instruction.show)
+
+                            if (instruction.show) {
+                                soundManager.playSound(instruction.gameInputButton)
+                            } else {
+                                soundManager.stop()
+                            }
+                        }
                     }
 
                 })
@@ -31,7 +37,7 @@ class MainPresenter(private val view: MainActivity) {
     }
 
     private fun buttonPressed(button: GameInputButton) {
-        gameEngine.buttonPressed(button)
+        gameEngine.notifyButtonPressed(button)
     }
 
     fun release() {

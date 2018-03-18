@@ -8,7 +8,7 @@ import fr.xebia.simonthings.engine.Screen
 
 class MainActivity : Activity() {
 
-    private val presenter = MainPresenter(this)
+    private val presenter = MainPresenter(this, SoundManager(this))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

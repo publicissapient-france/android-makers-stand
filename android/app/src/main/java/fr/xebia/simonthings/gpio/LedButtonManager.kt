@@ -1,5 +1,6 @@
 package fr.xebia.simonthings.gpio
 
+import com.google.android.things.contrib.driver.button.Button
 import com.google.android.things.pio.Gpio
 import com.google.android.things.pio.PeripheralManager
 import fr.xebia.simonthings.engine.GameInputButton
@@ -8,7 +9,7 @@ class LedButtonManager {
 
     fun init(peripheralManager: PeripheralManager, buttonPressedCallback: (GameInputButton) -> Unit) {
         CONTROLS.forEach {
-            val button = com.google.android.things.contrib.driver.button.Button(it.buttonGpioName, com.google.android.things.contrib.driver.button.Button.LogicState.PRESSED_WHEN_LOW)
+            val button = Button(it.buttonGpioName, Button.LogicState.PRESSED_WHEN_LOW)
             button.setOnButtonEventListener { _, _ -> buttonPressedCallback(it.gameInputButton) }
             it.button = button
 
