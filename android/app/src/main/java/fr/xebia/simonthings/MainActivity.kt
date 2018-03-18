@@ -15,10 +15,10 @@ import fr.xebia.simonthings.ui.WaitingFragment
 class MainActivity : Activity() {
     private val gameEngine = GameEngine()
 
-    private val buttonsGpioPinNames = mutableListOf(Pair("BCM2", fr.xebia.simonthings.engine.Button.YELLOW), Pair("BCM3", fr.xebia.simonthings.engine.Button.WHITE))
+    private val buttonsGpioPinNames = mutableListOf(Pair("BCM21", fr.xebia.simonthings.engine.Button.YELLOW), Pair("BCM16", fr.xebia.simonthings.engine.Button.WHITE))
     private val buttons = mutableListOf<Button>()
 
-    private val ledGpioPinNames = mutableListOf(Pair("BCM5", fr.xebia.simonthings.engine.Button.YELLOW), Pair("BCM6", fr.xebia.simonthings.engine.Button.WHITE))
+    private val ledGpioPinNames = mutableListOf(Pair("BCM26", fr.xebia.simonthings.engine.Button.YELLOW), Pair("BCM20", fr.xebia.simonthings.engine.Button.WHITE))
     private val leds = mutableListOf<Pair<fr.xebia.simonthings.engine.Button, Gpio>>()
 
     private lateinit var peripheralManager: PeripheralManager

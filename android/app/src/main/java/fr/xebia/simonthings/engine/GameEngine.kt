@@ -3,12 +3,9 @@ package fr.xebia.simonthings.engine
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.zipWith
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
-import kotlin.concurrent.timer
 
 sealed class Instruction {}
 
@@ -61,6 +58,8 @@ class GameEngine() {
         instructions.add(Button.YELLOW)
         instructions.add(Button.WHITE)
 
+        playState = PlayState.LEARN
+
         Observable.fromIterable(instructions)
                 .concatMap { button ->
                     ps.onNext(LedInstruction(button, true))
@@ -72,17 +71,18 @@ class GameEngine() {
                 .map {
                     ps.onNext(LedInstruction(it, false))
                 }
+                .doOnComplete {
+                    playState = PlayState.PLAY
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe {
-                    println("Done button $it")
-                    playState = PlayState.PLAY
                 }
     }
 
     fun buttonPressed(buttonPressed: Button) {
 
-        println("Pressed ${buttonPressed.name}")
+        println("Pressed ${buttonPressed.name} state is ${playState.name}")
 
         when (screen) {
             Screen.WAITING -> {
