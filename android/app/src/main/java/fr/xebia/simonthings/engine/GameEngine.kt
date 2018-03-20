@@ -6,11 +6,15 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import java.util.*
 import java.util.concurrent.TimeUnit
 
+data class Player(val id: String, val name: String, var count: Int, var start: Long, var time: Long)
+
 class GameEngine {
+    private var player: Player? = null
     private var playState: PlayState = PlayState.LEARN
-    private var screen: Screen = Screen.WAITING
+    private var screen: Screen = Screen.NAME
 
     private val playerInputs = mutableListOf<GameInputButton>()
     private val instructions = mutableListOf<GameInputButton>()
@@ -22,13 +26,13 @@ class GameEngine {
     }
 
     fun start() {
-        ps.onNext(ScreenDisplayRequest(Screen.WAITING))
+        ps.onNext(ScreenDisplayRequest(Screen.NAME))
     }
 
     private fun showSequence() {
         playerInputs.clear()
-        instructions.add(GameInputButton.YELLOW)
-        instructions.add(GameInputButton.WHITE)
+
+        instructions.add(getRandomColor())
 
         playState = PlayState.LEARN
 
@@ -52,12 +56,24 @@ class GameEngine {
                 }
     }
 
+    private fun getRandomColor(): GameInputButton {
+        var r = GameInputButton.values()[Random().nextInt(GameInputButton.values().size)]
+
+        if (r == GameInputButton.RED) {
+            r = GameInputButton.YELLOW
+        }
+
+        return r
+    }
+
+
     fun notifyButtonPressed(gameInputButtonPressed: GameInputButton) {
         println("DEBUG INPUT  ${gameInputButtonPressed.name}")
 
         when (screen) {
-            Screen.NAME -> startNewGame()
-            Screen.WAITING -> startNewGame()
+            Screen.NAME -> {
+                println("Ignored")
+            }
             Screen.PLAY -> handlePlayInput(gameInputButtonPressed)
         }
     }
@@ -71,7 +87,6 @@ class GameEngine {
         println("DEBUG PLAY INPUT ${gameInputButtonPressed.name}")
 
         playerInputs.add(gameInputButtonPressed)
-
         playerInputs.forEachIndexed { i, btn ->
             if (btn != instructions[i]) {
                 playState = PlayState.LEARN
@@ -79,12 +94,18 @@ class GameEngine {
                 ps.onNext(ScreenDisplayRequest(Screen.NAME))
                 ps.onNext(SoundDisplayRequest(R.raw.end))
 
+                player?.let {
+                    it.time = (System.currentTimeMillis() - it.start).toInt().toLong() / 1000 * 1000
+                    ps.onNext(EndGamePersistRequest(it))
+                }
                 println("DEBUG END OF GAME")
                 return
             }
         }
 
+        var won = false
         if (playerInputs.size == instructions.size) {
+            won = true
             println("DEBUG STOP PLAYING AND LEARN")
             playState = PlayState.LEARN
         }
@@ -92,12 +113,18 @@ class GameEngine {
         ps.onNext(GameInputButtonDisplayRequest(gameInputButtonPressed, true))
         Single.timer(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe { _ ->
                     ps.onNext(GameInputButtonDisplayRequest(gameInputButtonPressed, false))
 
-                    if (playerInputs.size == instructions.size) {
+                    if (won) {
+                        ps.onNext(ScoreDisplayRequest(instructions.size))
                         println("DEBUG HE WON")
+
+                        player?.let {
+                            it.count++
+                            ps.onNext(PlayerUpdateRequest(it))
+                        }
 
                         ps.onNext(SoundDisplayRequest(R.raw.start))
                         Single.timer(1, TimeUnit.SECONDS)
@@ -110,13 +137,18 @@ class GameEngine {
                 }
     }
 
-    private fun startNewGame() {
+    fun startNewGame(name: String) {
+        player = Player(UUID.randomUUID().toString(), name, 0, System.currentTimeMillis(), 0)
         instructions.clear()
         screen = Screen.PLAY
         playState = PlayState.LEARN
 
         ps.onNext(ScreenDisplayRequest(Screen.PLAY))
         ps.onNext(SoundDisplayRequest(R.raw.start))
+
+        player?.let {
+            ps.onNext(PlayerUpdateRequest(it))
+        }
 
         Single.timer(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())

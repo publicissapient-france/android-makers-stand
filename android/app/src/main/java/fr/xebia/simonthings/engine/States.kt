@@ -6,7 +6,6 @@ enum class PlayState {
 }
 
 enum class Screen {
-    WAITING,
-    PLAY,
-    NAME
+    NAME,
+    PLAY
 }

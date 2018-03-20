@@ -6,18 +6,20 @@ import fr.xebia.simonthings.R
 import fr.xebia.simonthings.engine.GameInputButton
 
 private val sounds = HashMap<GameInputButton, Int>().apply {
-    put(GameInputButton.YELLOW, R.raw.r)
-    put(GameInputButton.WHITE, R.raw.b)
+    put(GameInputButton.YELLOW, R.raw.y)
+    put(GameInputButton.BLUE, R.raw.b)
+    put(GameInputButton.RED, R.raw.r)
+    put(GameInputButton.GREEN, R.raw.g)
 }
 
-class SoundManager(val context: Context) {
-    var mediaPlayer: MediaPlayer? = null
+class SoundManager(private val context: Context) {
+    private var mediaPlayer: MediaPlayer? = null
 
     fun playSound(soundResId: Int) {
-        stop()
-
-        println("START SOUND")
         mediaPlayer = MediaPlayer.create(context, soundResId)
+        mediaPlayer?.apply {
+            setOnCompletionListener { release() }
+        }
         mediaPlayer?.start()
     }
 
@@ -28,7 +30,6 @@ class SoundManager(val context: Context) {
     }
 
     fun stop() {
-        println("STOP SOUND")
         mediaPlayer?.release()
         mediaPlayer = null
     }

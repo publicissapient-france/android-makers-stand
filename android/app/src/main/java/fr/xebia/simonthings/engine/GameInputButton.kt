@@ -4,6 +4,5 @@ enum class GameInputButton {
     RED,
     GREEN,
     YELLOW,
-    BLUE,
-    WHITE
+    BLUE
 }
