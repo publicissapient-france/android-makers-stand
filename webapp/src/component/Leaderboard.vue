@@ -11,7 +11,8 @@
       <ul>
         <li v-for="(score, index) in leaderboard" :key="score.id">
           <div class="position">{{index+1}} <span v-if="index === 0">🎉</span></div>
-          <div class="name">{{score.name}}</div>
+          <div v-if="withEmail" class="name email">{{score.email}}</div>
+          <div v-else class="name">{{score.name}}</div>
           <div class="count"><img src="../asset/point.svg">{{score.count}}</div>
           <div class="time"><img src="../asset/timer.svg">{{score.time/1000}}'</div>
         </li>
@@ -24,12 +25,17 @@
   import _ from 'lodash';
   import Firebase from '../firebase';
 
+  // noinspection JSUnusedGlobalSymbols
   export default {
     name: 'leaderboard',
     data: () => ({
       scores: [],
       player: {},
+      withEmail: false,
     }),
+    mounted() {
+      this.withEmail = this.$route.query.withEmail;
+    },
     computed: {
       leaderboard() {
         return _.sortBy(_.filter(this.scores, _.identity), [s => -s.count, s => s.time]);
@@ -77,6 +83,13 @@
         text-align: left;
         flex-grow: 1;
         text-transform: capitalize;
+        max-width: 400px;
+        overflow: hidden;
+
+        &.email {
+          font-size: 30px;
+          line-height: 70px;
+        }
       }
       .position, .count, .time {
         width: 20%;

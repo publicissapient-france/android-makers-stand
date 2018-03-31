@@ -12,6 +12,7 @@
 <script>
   import Firebase from '../firebase';
 
+  // noinspection JSUnusedGlobalSymbols
   export default {
     name: 'play',
     data: () => ({
