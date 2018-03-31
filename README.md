@@ -14,6 +14,7 @@ player/
 {
   id: '<unique id>',
   name: '<random name>',
+  email: '<player email>',
   count: <number of color found>,
   start: <timestamp at start>
 }
@@ -31,6 +32,7 @@ score/
  {
   id: <player id>
   name: '<player name>',
+  email: '<player email>',
   count: <number of color found>,
   time: <elapsed time since beginning in milliseconds>
  }
@@ -46,17 +48,20 @@ Example of `JSON`:
 	"player": {
 		"id": "f64f2940-fae4-11e7-8c5f-ef356f279131",
 		"name": "arnaud",
+		"email": "john@doe.fr",
 		"count": 10,
 		"start": 1520606607
 	},
 	"score": [{
 		"id": "f64f2940-fae4-11e7-8c5f-ef356f279131",
 		"name": "arnaud",
+		"email": "arnaud@doe.fr",
 		"count": 10,
 		"time": 60000
 	}, {
 		"id": "f64f2940-fae4-11e7-8c5f-ef356f279132",
 		"name": "michael",
+		"email": "michael@doe.fr",
 		"count": 10,
 		"time": 50000
 	}]
