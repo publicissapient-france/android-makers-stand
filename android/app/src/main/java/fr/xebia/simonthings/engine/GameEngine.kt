@@ -8,8 +8,9 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
-data class Player(val id: String, val name: String, var count: Int, var start: Long, var time: Long)
+data class Player(val id: String, val name: String, var count: Int, var start: Long, var time: Long, var email: String)
 
 class GameEngine {
     private var player: Player? = null
@@ -61,6 +62,10 @@ class GameEngine {
 
         if (r == GameInputButton.RED) {
             r = GameInputButton.YELLOW
+        }
+
+        if (r == GameInputButton.GREEN) {
+            r = GameInputButton.BLUE
         }
 
         return r
@@ -136,9 +141,17 @@ class GameEngine {
                     }
                 }
     }
-
+    val emailMatcher = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[A-Za-z0-9]")
     fun startNewGame(name: String) {
-        player = Player(UUID.randomUUID().toString(), name, 0, System.currentTimeMillis(), 0)
+        val matcher = emailMatcher.matcher(name)
+        if (!matcher.find()) {
+            return
+        }
+
+        val email = matcher.group(0)
+        val filteredName = name.replace(email, "").trim()
+
+        player = Player(UUID.randomUUID().toString(), filteredName, 0, System.currentTimeMillis(), 0, email.trim())
         instructions.clear()
         screen = Screen.PLAY
         playState = PlayState.LEARN
