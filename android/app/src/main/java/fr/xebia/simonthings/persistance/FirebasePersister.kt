@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import fr.xebia.simonthings.BuildConfig
 import fr.xebia.simonthings.engine.Player
+import io.reactivex.Single
+import java.lang.Exception
 
 object FirebasePersister {
     fun init(context: Context) {

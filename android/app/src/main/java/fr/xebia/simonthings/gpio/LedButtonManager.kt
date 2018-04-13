@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 class LedButtonManager {
@@ -43,8 +44,17 @@ class LedButtonManager {
         disposables.clear()
 
         CONTROLS.forEach {
-            it.ledGpio?.close()
-            it.button?.close()
+            try {
+                it.ledGpio?.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            try {
+                it.button?.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

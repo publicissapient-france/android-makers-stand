@@ -57,20 +57,7 @@ class GameEngine {
                 }
     }
 
-    private fun getRandomColor(): GameInputButton {
-        var r = GameInputButton.values()[Random().nextInt(GameInputButton.values().size)]
-
-        if (r == GameInputButton.RED) {
-            r = GameInputButton.YELLOW
-        }
-
-        if (r == GameInputButton.GREEN) {
-            r = GameInputButton.BLUE
-        }
-
-        return r
-    }
-
+    private fun getRandomColor(): GameInputButton = GameInputButton.values()[Random().nextInt(GameInputButton.values().size)]
 
     fun notifyButtonPressed(gameInputButtonPressed: GameInputButton) {
         println("DEBUG INPUT  ${gameInputButtonPressed.name}")
@@ -150,6 +137,10 @@ class GameEngine {
 
         val email = matcher.group(0)
         val filteredName = name.replace(email, "").trim()
+
+        if (email.isNullOrEmpty() || filteredName.isNullOrEmpty()) {
+            return
+        }
 
         player = Player(UUID.randomUUID().toString(), filteredName, 0, System.currentTimeMillis(), 0, email.trim())
         instructions.clear()
