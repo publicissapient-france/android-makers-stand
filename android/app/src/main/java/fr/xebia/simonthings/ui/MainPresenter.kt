@@ -4,6 +4,7 @@ import com.google.android.things.pio.PeripheralManager
 import fr.xebia.simonthings.engine.*
 import fr.xebia.simonthings.gpio.LedButtonManager
 import fr.xebia.simonthings.persistance.FirebasePersister
+import fr.xebia.simonthings.ui.SoundManager.Companion.NOTE_G5
 import io.reactivex.disposables.CompositeDisposable
 
 class MainPresenter(private val view: MainActivity, private val soundManager: SoundManager) {
@@ -14,6 +15,7 @@ class MainPresenter(private val view: MainActivity, private val soundManager: So
 
     fun init() {
         ledButtonsManager.init(PeripheralManager.getInstance(), this::buttonPressed)
+        soundManager.init()
 
         disposables.add(gameEngine.listen()
                 .subscribe { instruction ->
@@ -24,7 +26,7 @@ class MainPresenter(private val view: MainActivity, private val soundManager: So
                             FirebasePersister.clearPlayer()
                         }
                         is ScreenDisplayRequest -> view.showScreen(instruction.screen)
-                        is SoundDisplayRequest -> soundManager.playSound(instruction.soundResId)
+                        is SoundDisplayRequest -> soundManager.playSound(instruction.soundResId, 0.0)
                         is ScoreDisplayRequest -> {
                             view.showScore(instruction.score)
                         }
@@ -53,6 +55,7 @@ class MainPresenter(private val view: MainActivity, private val soundManager: So
     fun release() {
         disposables.clear()
         ledButtonsManager.release()
+        soundManager.release()
     }
 
     fun onNameEntered(name: String) {

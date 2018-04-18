@@ -40,13 +40,14 @@ class GameEngine {
         Observable.fromIterable(instructions)
                 .concatMap { button ->
                     ps.onNext(GameInputButtonDisplayRequest(button, true))
+                    Observable.timer(700, TimeUnit.MILLISECONDS)
+                            .subscribe {
+                                ps.onNext(GameInputButtonDisplayRequest(button, false))
+                            }
                     return@concatMap Observable.timer(1, TimeUnit.SECONDS)
                             .map {
                                 button
                             }
-                }
-                .map {
-                    ps.onNext(GameInputButtonDisplayRequest(it, false))
                 }
                 .doOnComplete {
                     playState = PlayState.PLAY
