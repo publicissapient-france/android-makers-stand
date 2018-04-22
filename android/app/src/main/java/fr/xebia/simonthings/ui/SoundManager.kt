@@ -2,7 +2,6 @@ package fr.xebia.simonthings.ui
 
 import android.content.Context
 import android.media.MediaPlayer
-import com.google.android.things.pio.PeripheralManager
 import com.google.android.things.pio.Pwm
 import fr.xebia.simonthings.R
 import fr.xebia.simonthings.engine.GameInputButton
@@ -61,12 +60,13 @@ class SoundManager(private val context: Context) {
         }
         mediaPlayer?.start()
 
+
         if (freq > 0) {
             println("speaker is starting with freq : $freq")
 
             try {
-                speaker?.setPwmFrequencyHz(freq / 10)
-                speaker?.setPwmDutyCycle(20.0)
+                speaker?.setPwmFrequencyHz(freq)
+                speaker?.setPwmDutyCycle(40.0)
                 speaker?.setEnabled(true)
             } catch (e: IOException) {
                 println("Error speaker ${e.message}")
@@ -98,11 +98,11 @@ class SoundManager(private val context: Context) {
     }
 
     fun init() {
-        try {
-            speaker = PeripheralManager.getInstance().openPwm("PWM1")
-        } catch (e: IOException) {
-            println("Error speaker ${e.message}")
-            e.printStackTrace()
-        }
+//        try {
+//            speaker = PeripheralManager.getInstance().openPwm("PWM1")
+//        } catch (e: IOException) {
+//            println("Error speaker ${e.message}")
+//            e.printStackTrace()
+//        }
     }
 }
